@@ -4,6 +4,8 @@ Stencil is a simple and powerful template language for Swift. It provides a
 syntax similar to Django and Mustache. If you're familiar with these, you will
 feel right at home with Stencil.
 
+_Please note that this is a fork of Stencil (one of [many](https://github.com/stencilproject/Stencil/forks)) with extensions to support [InContext 3](https://github.com/inseven/ic3). It adds a number of bug fixes and extensions to improve compatibility with Jinja 2 templates. I would love to upstream these changes, but it looks like the original Stencil might no longer be in active development._
+
 ## Example
 
 ```html+django
