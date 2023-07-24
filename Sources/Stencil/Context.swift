@@ -4,6 +4,12 @@
 // MIT Licence
 //
 
+public enum ContextError: Error {
+
+    case missingKey(String)
+
+}
+
 /// A container for template variables.
 public class Context {
   var dictionaries: [[String: Any?]]
@@ -49,6 +55,22 @@ public class Context {
       }
     }
   }
+
+    public func update(key: String, value: Any?) throws {
+        // Unfortunately we can't mutate these dictionaries in place, so we have to take a copy, update, and replace.
+        // Curiously, Swift doesn't error if we update the dictionary inline.
+        let range = 0..<dictionaries.count
+        for i in range.reversed() {
+            guard dictionaries[i][key] != nil else {
+                continue
+            }
+            var dictionary = dictionaries[i]
+            dictionary[key] = value
+            dictionaries[i] = dictionary
+            return
+        }
+        throw ContextError.missingKey(key)
+    }
 
   /// Push a new level into the Context
   ///
