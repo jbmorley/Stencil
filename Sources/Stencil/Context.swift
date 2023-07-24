@@ -23,7 +23,7 @@ public class Context {
   ///   - environment: Environment such as extensions, …
   public convenience init(dictionary: [String: Any] = [:], environment: Environment? = nil) {
     self.init(
-      dictionaries: dictionary.isEmpty ? [] : [dictionary],
+      dictionaries: [dictionary],
       environment: environment ?? Environment()
     )
   }
