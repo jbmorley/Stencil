@@ -59,7 +59,7 @@ public class FileSystemLoader: Loader, CustomStringConvertible {
       }
 
       let content: String = try templatePath.read()
-      return environment.templateClass.init(templateString: content, environment: environment, name: name)
+      return try environment.templateClass.init(templateString: content, environment: environment, name: name)
     }
 
     throw TemplateDoesNotExist(templateNames: [name], loader: self)
@@ -72,7 +72,7 @@ public class FileSystemLoader: Loader, CustomStringConvertible {
 
         if templatePath.exists {
           let content: String = try templatePath.read()
-          return environment.templateClass.init(templateString: content, environment: environment, name: templateName)
+          return try environment.templateClass.init(templateString: content, environment: environment, name: templateName)
         }
       }
     }
@@ -90,7 +90,7 @@ public class DictionaryLoader: Loader {
 
   public func loadTemplate(name: String, environment: Environment) throws -> Template {
     if let content = templates[name] {
-      return environment.templateClass.init(templateString: content, environment: environment, name: name)
+      return try environment.templateClass.init(templateString: content, environment: environment, name: name)
     }
 
     throw TemplateDoesNotExist(templateNames: [name], loader: self)
@@ -99,7 +99,7 @@ public class DictionaryLoader: Loader {
   public func loadTemplate(names: [String], environment: Environment) throws -> Template {
     for name in names {
       if let content = templates[name] {
-        return environment.templateClass.init(templateString: content, environment: environment, name: name)
+        return try environment.templateClass.init(templateString: content, environment: environment, name: name)
       }
     }
 

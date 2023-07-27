@@ -14,6 +14,8 @@ public enum ContextError: Error {
 public class Context {
   var dictionaries: [[String: Any?]]
 
+    public var templates: [String] = []
+
   /// The context's environment, such as registered extensions, classes, …
   public let environment: Environment
 

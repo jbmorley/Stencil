@@ -15,22 +15,26 @@ let NSFileNoSuchFileError = 4
 /// A class representing a template
 open class Template: ExpressibleByStringLiteral {
   let templateString: String
-  var environment: Environment
+  let environment: Environment
 
   /// The list of parsed (lexed) tokens
   public let tokens: [Token]
+  public let nodes: [NodeType]
 
   /// The name of the loaded Template if the Template was loaded from a Loader
   public let name: String?
 
   /// Create a template with a template string
-  public required init(templateString: String, environment: Environment? = nil, name: String? = nil) {
+  public required init(templateString: String, environment: Environment? = nil, name: String? = nil) throws {
     self.environment = environment ?? Environment()
     self.name = name
     self.templateString = templateString
 
     let lexer = Lexer(templateName: name, templateString: templateString)
     tokens = lexer.tokenize()
+
+      let parser = TokenParser(tokens: tokens, environment: environment!)
+      nodes = try parser.parse()
   }
 
   /// Create a template with the given name inside the given bundle
@@ -53,14 +57,14 @@ open class Template: ExpressibleByStringLiteral {
   /// Create a template with a file found at the given path
   @available(*, deprecated, message: "Use Environment/FileSystemLoader instead")
   public convenience init(path: Path, environment: Environment? = nil, name: String? = nil) throws {
-    self.init(templateString: try path.read(), environment: environment, name: name)
+    try self.init(templateString: try path.read(), environment: environment, name: name)
   }
 
   // MARK: ExpressibleByStringLiteral
 
   // Create a templaVte with a template string literal
   public required convenience init(stringLiteral value: String) {
-    self.init(templateString: value)
+    try! self.init(templateString: value)
   }
 
   // Create a template with a template string literal
@@ -75,15 +79,17 @@ open class Template: ExpressibleByStringLiteral {
 
   /// Render the given template with a context
   public func render(_ context: Context) throws -> String {
-    let context = context
-    let parser = TokenParser(tokens: tokens, environment: context.environment)
-    let nodes = try parser.parse()
+    if let name {
+      context.templates.append(name)
+    }
     return try renderNodes(nodes, context)
   }
 
   // swiftlint:disable discouraged_optional_collection
   /// Render the given template
-  open func render(_ dictionary: [String: Any]? = nil) throws -> String {
-    try render(Context(dictionary: dictionary ?? [:], environment: environment))
+  open func render(_ dictionary: [String: Any]? = nil) throws -> (String, [String]) {
+    var context = Context(dictionary: dictionary ?? [:], environment: environment)
+    let contents = try render(context)
+      return (contents, context.templates)
   }
 }

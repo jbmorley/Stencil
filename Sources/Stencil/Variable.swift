@@ -99,6 +99,7 @@ public struct Variable: Equatable, Resolvable {
   }
 
   // Try to resolve a partial keypath for the given context
+  // TODO: This might be useful?
   private func resolve(bit: String, context: Any?) -> Any? {
     let context = normalize(context)
 

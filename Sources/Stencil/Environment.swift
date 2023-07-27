@@ -66,7 +66,7 @@ public struct Environment {
   ///  - name: Name of the template
   ///  - context: Data for rendering
   /// - returns: Rendered output
-  public func renderTemplate(name: String, context: [String: Any] = [:]) throws -> String {
+  public func renderTemplate(name: String, context: [String: Any] = [:]) throws -> (String, [String]) {
     let template = try loadTemplate(name: name)
     return try render(template: template, context: context)
   }
@@ -77,14 +77,14 @@ public struct Environment {
   ///  - string: Template string
   ///  - context: Data for rendering
   /// - returns: Rendered output
-  public func renderTemplate(string: String, context: [String: Any] = [:]) throws -> String {
-    let template = templateClass.init(templateString: string, environment: self)
+  public func renderTemplate(string: String, context: [String: Any] = [:]) throws -> (String, [String]) {
+    let template = try templateClass.init(templateString: string, environment: self)
     return try render(template: template, context: context)
   }
 
-  func render(template: Template, context: [String: Any]) throws -> String {
+  func render(template: Template, context: [String: Any]) throws -> (String, [String]) {
     // update template environment as it can be created from string literal with default environment
-    template.environment = self
+//    template.environment = self
     return try template.render(context)
   }
 }
